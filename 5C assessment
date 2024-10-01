@@ -1,0 +1,40 @@
+//Data preprocessing 
+import cv2
+def apply_clahe(image):
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+    return clahe.apply(image)
+
+//Normalization
+def normalize(image):
+    return image / 255.0
+    
+//Model training and evaluation
+from sklearn.metrics import jaccard_score
+
+def dice_score(true, pred):
+    return (2 * (true * pred).sum()) / (true.sum() + pred.sum())
+
+//Web Application Development 
+from fastapi import FastAPI, UploadFile
+from your_model_file import load_model, predict
+
+app = FastAPI()
+
+@app.post("/predict/")
+async def predict_metastasis(file: UploadFile):
+    image = await file.read()
+    segmentation = predict(image)
+    return {"segmentation": segmentation}
+
+//Streamlit UI
+
+import streamlit as st
+import requests
+
+def upload_and_predict():
+    uploaded_file = st.file_uploader("Choose a brain MRI image", type="png")
+    if uploaded_file is not None:
+        response = requests.post("http://localhost:8000/predict/", files={"file": uploaded_file})
+        st.image(response.json()['segmentation'], caption='Segmented MRI')
+
+
